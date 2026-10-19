@@ -1,0 +1,264 @@
+---
+title: "Speed-accuracy trade-off in Stroop tasks"
+author: "Greta Beckurts"
+date: "2026-10-17"
+output: pdf_document
+toc: true
+toc_depth: 2
+---
+
+```{r} 
+# devtools::install_github("SLesche/acdc-query")
+# library(acdcquery)
+library(dplyr)
+
+# load functions for data cleaning and plotting
+source("functions.R")
+```
+
+## Data loading
+```{r}
+#download the ACDC
+# download_acdc(dest_dir = getwd())
+
+# connect to ACDC
+db_filepath <- "acdc.db"
+conn <- connect_to_db(db_filepath)
+
+# create a list with filter arguments to select data
+argument_list <- list()
+
+# select data only from stroop tasks
+argument_list <- add_argument(
+  list = argument_list,
+  conn = conn,
+  variable = "task_name",
+  operator = "equal",
+  values = c("stroop")
+)
+
+# select data from all authors except Ebersole et al.
+argument_list <- add_argument(
+  list = argument_list,
+  conn = conn,
+  variable = "authors",
+  operator = "notequal",
+  values = "Charles R. Ebersole, Olivia E. Atherton, Aimee L. Belanger, Hayley M. Skulborstad, Jill M. Allen, Jonathan B. Banks, Erica Baranski, Michael J. Bernstein, Diane B.V. Bonfiglio, Leanne Boucher,  Elizabeth R. Brown, Nancy I. Budiman, Athena H. Cairo, Colin A. Capaldi, Christopher R. Chartier, Joanne M. Chung, David C. Cicero, Jennifer A. Coleman, John G. Conway, William E. Davis, Thierry Devos, Melody M. Fletcher, Komi German, Jon E. Grahe, Anthony D. Hermann, Joshua A. Hicks, Nathan Honeycutt, Brandon Humphrey, Matthew Janus, David J. Johnson, Jennifer A. Joy-Gaba, Hannah Juzeler, Ashley Keres, Diana Kinney, Jacqeline Kirshenbaum, Richard A. Klein, Richard E. Lucas, Christopher J.N. Lustgraaf, Daniel Martin, Madhavi Menon, Mitchell Metzger, Jaclyn M. Moloney, Patrick J. Morse, Radmila Prislin, Timothy Razza, Daniel E. Re, Nicholas O. Rule, Donald F. Sacco, Kyle Sauerberger, Emily Shrider, Megan Shultz, Courtney Siemsen, Karin Sobocko, R. Weylin Sternglanz, Amy Summerville, Konstantin O. Tskhay, Zack van Allen, Leigh Ann Vaughn, Ryan J. Walker, Ashley Weinberg, John Paul Wilson, James H. Wirth, Jessica Wortman, Brian A. Nosek"
+)
+
+# query ACDC using the specified filtering
+results <- query_db(
+  conn = conn,
+  arguments = argument_list,
+  target_vars = c(
+    "default",
+    "authors",
+    "within_description",
+    "dataset_id",
+    "study_id",
+    "task_name",
+    "task_description",
+    "study_comment"),
+    target_table = c("observation_table"),
+  argument_relation = "and"
+)
+
+
+# write_csv(
+#   results,
+#   file.path("acdc_stroop_data.csv")
+# )
+```
+
+## Data cleaning
+```{r}
+enkavi <- results %>%
+  filter(authors == unique(res$authors)[1]) %>%
+  filter(within_id == 2) %>% # only use data from the first measurement point
+  clean_data(accuracy_cutoff = 0.50)
+
+hedge <- results %>%
+  filter(authors == unique(res$authors)[2]) %>%
+  filter(within_id %in% c(8, 9)) %>% # only use data from the first measurement point
+  clean_data(accuracy_cutoff = 0.50)
+
+löffler <- results %>%
+  filter(authors == unique(res$authors)[3]) %>%
+  filter(accuracy != -3 & accuracy != -2) %>%
+  clean_data(accuracy_cutoff = 0.50)
+ 
+pratte_exp1 <- results %>%
+  filter(authors == unique(res$authors)[4]) %>%
+  filter(dataset_id == 39) %>% # Experiment 1 in Pratte et al. (2010)
+  clean_data(accuracy_cutoff = 0.50)
+ 
+pratte_exp2 <- results %>%
+  filter(authors == unique(res$authors)[4]) %>%
+  filter(dataset_id == 41)  %>% # Experiment 2 in Pratte et al. (2010)
+  clean_data(accuracy_cutoff = 0.75)
+
+rey_mermet1 <- results %>%
+  filter(authors == unique(res$authors)[5]) %>%
+  filter(dataset_id == 42)  %>% # color stroop task, young adults
+  clean_data(accuracy_cutoff = 0.50)
+
+rey_mermet2 <- results %>%
+  filter(authors == unique(res$authors)[5]) %>%
+  filter(dataset_id == 43)  %>% # numeric stroop task, young adults
+  clean_data(accuracy_cutoff = 0.50)
+
+rey_mermet3 <- results %>%
+  filter(authors == unique(res$authors)[5]) %>%
+  filter(dataset_id == 46) %>% # classical color stroop task, older adults
+  clean_data(accuracy_cutoff = 0.50)
+ 
+rey_mermet4 <- results %>%
+  filter(authors == unique(res$authors)[5]) %>%
+  filter(dataset_id == 47) %>% # numeric stroop task, older adults
+  clean_data(accuracy_cutoff = 0.50)
+
+stahl <- results %>%
+  filter(authors == unique(res$authors)[6]) %>%
+  clean_data(accuracy_cutoff = 0.75)
+
+tang1 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; baseline session; mostly congruent set") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+
+tang2 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; baseline session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+
+tang3 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; reactive session; mostly congruent set (100% congruent)") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+
+tang4 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; reactive session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+
+tang5 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; reactive session; mostly incongruent set") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+
+tang6 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; proactive session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+
+tang7 <- results %>%
+  filter(authors == unique(res$authors)[7]) %>%
+  filter(within_description == "test phase; proactive session; mostly incongruent set") %>% # first measurement point
+  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+ 
+von_bastian <- results %>%
+  filter(authors == unique(res$authors)[8]) %>%
+  clean_data(accuracy_cutoff = 0.50)
+
+whitehead1 <- res %>%
+  filter(authors == unique(res$authors)[9]) %>%
+  filter(dataset_id == 56) %>% # data taken from Experiment 1 in Whitehead, Brewer & Blais (2019)
+  clean_data(accuracy_cutoff = 0.50)
+  
+whitehead2 <- results %>%
+  filter(authors == unique(res$authors)[9]) %>%
+  filter(dataset_id == 59) %>% # data taken from Experiment 2 in Whitehead, Brewer & Blais (2019)
+  clean_data(accuracy_cutoff = 0.50)
+  
+whitehead3 <- results %>%
+  filter(authors == unique(res$authors)[9]) %>%
+  filter(dataset_id == 62) %>% # data taken from Experiment 3 in Whitehead, Brewer & Blais (2019)
+  clean_data(accuracy_cutoff = 0.50)
+
+datasets <- list(
+  "Enkavi et al. (2019)" = enkavi,
+  "Hedge et al. (2018)" = hedge,
+  "Löffler et al." = löffler,
+  "Pratte et al. (2010), experiment 1" = pratte_exp1,
+  "Pratte et al. (2010), experiment 2" = pratte_exp2,
+  "Rey-Mermet et al. (2018), color Stroop, young adults" = rey_mermet1,
+  "Rey-Mermet et al. (2018), numeric Stroop, young adults" = rey_mermet2,
+  "Rey-Mermet et al. (2018), color Stroop, older adults" = rey_mermet3,
+  "Rey-Mermet et al. (2018), numeric Stroop, older adults" = rey_mermet4,
+  "Stahl et al. (2014)" = stahl,
+  "Tang et al. (2023), baseline session, mostly congruent set" = tang1,
+  "Tang et al. (2023), baseline session, 50% congruency" = tang2,
+  "Tang et al. (2023), reactive session, 100% congruent" = tang3,
+  "Tang et al. (2023), reactive session, 50% congruency" = tang4,
+  "Tang et al. (2023), reactive session, mostly incongruent set" = tang5,
+  "Tang et al. (2023), proactive session, 50% congruency" = tang6,
+  "Tang et al. (2023), proactive session, mostly incongruent set" = tang7,
+  "von Bastian et al. (2016)" = von_bastian,
+  "Whitehead et al. (2020), experiment 1" = whitehead1,
+  "Whitehead et al. (2020), experiment 2" = whitehead2,
+  "Whitehead et al. (2020), experiment 3" = whitehead3
+)
+```
+
+
+## Plotting the results
+### Group-level association between speed and accuracy
+```{r}
+for (name in names(datasets)) {
+  
+    if (name == "Tang et al. (2023), reactive session, 100% congruent") {
+    next
+    }
+  
+  plot <- plot_group_corr(datasets[[name]], name)
+  print(plot)
+}
+```
+
+### Group-level association between the effect of congruency on rt and the effect on accuracy
+```{r}
+for (name in names(datasets)) {
+  
+  if (name == "Tang et al. (2023), reactive session, 100% congruent") {
+    next
+    }
+  
+  plot <- plot_effect(datasets[[name]], name)
+  print(plot)
+}
+``` 
+
+
+### Subject-level association between speed and accuracy across sections of 20 trials
+```{r}
+for (name in names(datasets)) {
+  
+  if (name == "Tang et al. (2023), reactive session, 100% congruent") {
+    next
+  }
+  
+  plot <- plot_speed_acc_lm(datasets[[name]], name)
+  print(plot)
+}
+```
+
+## RT for trials with correct and incorrect answers
+```{r}
+for (name in names(datasets)) {
+  plot <- plot_rt_acc(datasets[[name]], name)
+  print(plot)
+}
+```
+
+## Association between the proportion of subjects with accuracy > .99 and the sign of the correlation between speed and accuracy
+```{r}
+for (name in names(datasets)) {
+  
+  if (name == "Tang et al. (2023), reactive session, 100% congruent") {
+    next
+    }
+  
+  p <- ceiling_sign_summary(datasets[[name]], name)
+  print(p)
+}
+```
