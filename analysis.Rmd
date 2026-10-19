@@ -10,7 +10,7 @@ toc_depth: 2
 ```{r} 
 # devtools::install_github("SLesche/acdc-query")
 # library(acdcquery)
-library(dplyr)
+library(tidyverse)
 
 # load functions for data cleaning and plotting
 source("functions.R")
