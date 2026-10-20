@@ -242,7 +242,7 @@ for (name in names(datasets)) {
 }
 ```
 
-## RT for trials with correct and incorrect answers
+### RT for trials with correct and incorrect answers
 ```{r}
 for (name in names(datasets)) {
   plot <- plot_rt_acc(datasets[[name]], name)
@@ -250,7 +250,7 @@ for (name in names(datasets)) {
 }
 ```
 
-## Association between the proportion of subjects with accuracy > .99 and the sign of the correlation between speed and accuracy
+### Association between the proportion of subjects with accuracy > .99 and the sign of the correlation between speed and accuracy
 ```{r}
 for (name in names(datasets)) {
   
