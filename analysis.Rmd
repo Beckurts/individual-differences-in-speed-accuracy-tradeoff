@@ -124,38 +124,38 @@ stahl <- results %>%
 tang1 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; baseline session; mostly congruent set") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+  clean_data(accuracy_cutoff = 0.50)
 
 tang2 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; baseline session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+  clean_data(accuracy_cutoff = 0.50)
 
 tang3 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; reactive session; mostly congruent set (100% congruent)") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+  clean_data(accuracy_cutoff = 0.50)
 
 tang4 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; reactive session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+  clean_data(accuracy_cutoff = 0.50)
 
 tang5 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; reactive session; mostly incongruent set") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+  clean_data(accuracy_cutoff = 0.50)
 
 tang6 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; proactive session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
+  clean_data(accuracy_cutoff = 0.50)
 
 tang7 <- results %>%
   filter(authors == unique(res$authors)[7]) %>%
   filter(within_description == "test phase; proactive session; mostly incongruent set") %>% # first measurement point
-  clean_data(accuracy_cutoff = 0.50) # trials of subjects with mean accuracy < .50 become NA, 4 possible answers (vocal), chance level = .25
- 
+  clean_data(accuracy_cutoff = 0.50)
+
 von_bastian <- results %>%
   filter(authors == unique(res$authors)[8]) %>%
   clean_data(accuracy_cutoff = 0.50)
