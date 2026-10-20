@@ -18,7 +18,7 @@ source("functions.R")
 
 ## Data loading
 ```{r}
-#download the ACDC
+#download the ACDC (Haaf et al., 2025)
 # download_acdc(dest_dir = getwd())
 
 # connect to ACDC
