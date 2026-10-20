@@ -25,47 +25,46 @@ results <- read_csv("acdc_stroop_data.csv")
 # download_acdc(dest_dir = getwd())
 
 # connect to ACDC
-db_filepath <- "acdc.db"
-conn <- connect_to_db(db_filepath)
-
-# create a list with filter arguments to select data
-argument_list <- list()
-
-# select data only from stroop tasks
-argument_list <- add_argument(
-  list = argument_list,
-  conn = conn,
-  variable = "task_name",
-  operator = "equal",
-  values = c("stroop")
-)
-
-# select data from all authors except Ebersole et al.
-argument_list <- add_argument(
-  list = argument_list,
-  conn = conn,
-  variable = "authors",
-  operator = "notequal",
-  values = "Charles R. Ebersole, Olivia E. Atherton, Aimee L. Belanger, Hayley M. Skulborstad, Jill M. Allen, Jonathan B. Banks, Erica Baranski, Michael J. Bernstein, Diane B.V. Bonfiglio, Leanne Boucher,  Elizabeth R. Brown, Nancy I. Budiman, Athena H. Cairo, Colin A. Capaldi, Christopher R. Chartier, Joanne M. Chung, David C. Cicero, Jennifer A. Coleman, John G. Conway, William E. Davis, Thierry Devos, Melody M. Fletcher, Komi German, Jon E. Grahe, Anthony D. Hermann, Joshua A. Hicks, Nathan Honeycutt, Brandon Humphrey, Matthew Janus, David J. Johnson, Jennifer A. Joy-Gaba, Hannah Juzeler, Ashley Keres, Diana Kinney, Jacqeline Kirshenbaum, Richard A. Klein, Richard E. Lucas, Christopher J.N. Lustgraaf, Daniel Martin, Madhavi Menon, Mitchell Metzger, Jaclyn M. Moloney, Patrick J. Morse, Radmila Prislin, Timothy Razza, Daniel E. Re, Nicholas O. Rule, Donald F. Sacco, Kyle Sauerberger, Emily Shrider, Megan Shultz, Courtney Siemsen, Karin Sobocko, R. Weylin Sternglanz, Amy Summerville, Konstantin O. Tskhay, Zack van Allen, Leigh Ann Vaughn, Ryan J. Walker, Ashley Weinberg, John Paul Wilson, James H. Wirth, Jessica Wortman, Brian A. Nosek"
-)
-
-# query ACDC using the specified filtering
-results <- query_db(
-  conn = conn,
-  arguments = argument_list,
-  target_vars = c(
-    "default",
-    "authors",
-    "within_description",
-    "dataset_id",
-    "study_id",
-    "task_name",
-    "task_description",
-    "study_comment"),
-    target_table = c("observation_table"),
-  argument_relation = "and"
-)
-
+# db_filepath <- "acdc.db"
+# conn <- connect_to_db(db_filepath)
+# 
+# # create a list with filter arguments to select data
+# argument_list <- list()
+# 
+# # select data only from stroop tasks
+# argument_list <- add_argument(
+#   list = argument_list,
+#   conn = conn,
+#   variable = "task_name",
+#   operator = "equal",
+#   values = c("stroop")
+# )
+# 
+# # select data from all authors except Ebersole et al.
+# argument_list <- add_argument(
+#   list = argument_list,
+#   conn = conn,
+#   variable = "authors",
+#   operator = "notequal",
+#   values = "Charles R. Ebersole, Olivia E. Atherton, Aimee L. Belanger, Hayley M. Skulborstad, Jill M. Allen, Jonathan B. Banks, Erica Baranski, Michael J. Bernstein, Diane B.V. Bonfiglio, Leanne Boucher,  Elizabeth R. Brown, Nancy I. Budiman, Athena H. Cairo, Colin A. Capaldi, Christopher R. Chartier, Joanne M. Chung, David C. Cicero, Jennifer A. Coleman, John G. Conway, William E. Davis, Thierry Devos, Melody M. Fletcher, Komi German, Jon E. Grahe, Anthony D. Hermann, Joshua A. Hicks, Nathan Honeycutt, Brandon Humphrey, Matthew Janus, David J. Johnson, Jennifer A. Joy-Gaba, Hannah Juzeler, Ashley Keres, Diana Kinney, Jacqeline Kirshenbaum, Richard A. Klein, Richard E. Lucas, Christopher J.N. Lustgraaf, Daniel Martin, Madhavi Menon, Mitchell Metzger, Jaclyn M. Moloney, Patrick J. Morse, Radmila Prislin, Timothy Razza, Daniel E. Re, Nicholas O. Rule, Donald F. Sacco, Kyle Sauerberger, Emily Shrider, Megan Shultz, Courtney Siemsen, Karin Sobocko, R. Weylin Sternglanz, Amy Summerville, Konstantin O. Tskhay, Zack van Allen, Leigh Ann Vaughn, Ryan J. Walker, Ashley Weinberg, John Paul Wilson, James H. Wirth, Jessica Wortman, Brian A. Nosek"
+# )
+# 
+# # query ACDC using the specified filtering
+# results <- query_db(
+#   conn = conn,
+#   arguments = argument_list,
+#   target_vars = c(
+#     "default",
+#     "authors",
+#     "within_description",
+#     "dataset_id",
+#     "study_id",
+#     "task_name",
+#     "task_description",
+#     "study_comment"),
+#   target_table = c("observation_table"),
+#   argument_relation = "and"
+# )
 
 # write_csv(
 #   results,
