@@ -18,7 +18,10 @@ source("functions.R")
 
 ## Data loading
 ```{r}
-#download the ACDC (Haaf et al., 2025)
+# read the uploaded file containing the selected Stroop data from the ACDC (Haaf et al., 2025)
+results <- read_csv("acdc_stroop_data.csv")
+
+# or download the data directly from the ACDC
 # download_acdc(dest_dir = getwd())
 
 # connect to ACDC
