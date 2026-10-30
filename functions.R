@@ -27,6 +27,22 @@ clean_data <- function(res, accuracy_cutoff) {
     ungroup()
 }
 
+# mean number of trials per subject and condition (for plot labels)
+trial_label <- function(res, conditions = c("congruent", "incongruent")) {
+  counts <- res %>%
+    filter(congruency %in% conditions) %>%
+    group_by(subject, congruency) %>%
+    summarise(n_trials = n(), .groups = "drop") %>%
+    group_by(congruency) %>%
+    summarise(mean_n = mean(n_trials), sd_n = sd(n_trials), .groups = "drop")
+  
+  paste0(
+    "Mean number of trials per subject: ",
+    paste0(counts$congruency, " = ", round(counts$mean_n, 1),
+           " (SD = ", round(counts$sd_n, 1), ")",
+           collapse = "; ")
+  )
+}
 
 ## Functions for plotting
 # all plots display data from incongruent conditions (except for plot_effect() and plot_rt_acc())
@@ -44,7 +60,7 @@ plot_group_corr <- function(res, plot_title) {
          aes(x = mean_rt, y = mean_accuracy)) +
     geom_point() +
     geom_smooth(method = "lm", se = TRUE) +
-    labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title) +
+    labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title, subtitle = trial_label(res, "incongruent")) +
     theme_minimal()
 }
 
@@ -72,7 +88,8 @@ plot_effect <- function(res, plot_title) {
   ggplot(effects, aes(x = rt_effect, y = acc_effect)) +
     geom_point() +
     geom_smooth(method = "lm", se = TRUE) +
-    labs(x = "RT effect (incongruent - congruent)", y = "Accuracy effect (incongruent - congruent)", title = plot_title) +
+    labs(x = "RT effect (incongruent - congruent)", y = "Accuracy effect (incongruent - congruent)", title = plot_title,
+         subtitle = trial_label(res %>% filter(subject %in% effects$subject))) +
     theme_minimal()
 }
 
@@ -126,7 +143,7 @@ plot_speed_acc_lm <- function(res, plot_title) {
     geom_smooth(aes(group = subject, color = sign_corr),
                 method = "lm",
                 se = FALSE) +
-    labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title) +
+    labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title, subtitle = trial_label(res %>% filter(subject %in% plot_data$subject)) +
     scale_color_manual(
       name = "speed-accuracy correlation",
       values = c(
@@ -148,7 +165,7 @@ plot_rt_acc <- function(res, plot_title) {
   ggplot(acc_data, aes(y = mean_rt, x = accuracy, group = subject)) +
     geom_line(alpha = 0.3, color = "blue") +
     geom_point(alpha = 0.6, color = "blue") +
-    labs(x = "Accuracy", y = "Mean reaction time (s)", title = plot_title) +
+    labs(x = "Accuracy", y = "Mean reaction time (s)", title = plot_title,  subtitle = trial_label(res)) +
     theme_minimal()
 }
 
