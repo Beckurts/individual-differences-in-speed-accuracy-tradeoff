@@ -3,9 +3,11 @@
 
 clean_data <- function(res, accuracy_cutoff) {
   res %>%
-    filter(block != -999) %>% # remove practice trials
-    # set RTs outside the specified range NA
-    mutate(rt = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, rt)) %>%
+    filter(is.na(block) | block != -999) %>% # remove practice trials, keep rows with missing block
+    # set RT and accuracy of trials with RTs outside the specified range NA
+    accuracy = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, accuracy),
+    rt = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, rt)
+    ) %>%
     # calculate mean accuracy for each subject
     group_by(subject) %>%
     mutate(mean_accuracy = mean(accuracy, na.rm = TRUE)) %>%
@@ -16,18 +18,17 @@ clean_data <- function(res, accuracy_cutoff) {
       accuracy = if_else(mean_accuracy < accuracy_cutoff, NA_real_, accuracy),
       rt = if_else(mean_accuracy < accuracy_cutoff, NA_real_, rt)
     ) %>%
-    ungroup() %>%
     # calculate proportion of NA trials for each subject
-    group_by(subject) %>%
     mutate(na_proportion = mean(is.na(rt) | is.na(accuracy))) %>%
     # remove subjects with >= 50% NA trials
     filter(na_proportion < 0.50) %>%
+    filter(!is.na(rt), !is.na(accuracy)) %>%   # drop excluded trials
     ungroup()
 }
 
 
 ## Functions for plotting
-# all plots display data from incongruent conditions (except for plot_effect())
+# all plots display data from incongruent conditions (except for plot_effect() and plot_rt_acc())
 
 # group-level association between speed and accuracy
 plot_group_corr <- function(res, plot_title) {
@@ -35,9 +36,7 @@ plot_group_corr <- function(res, plot_title) {
     group_by(subject, congruency) %>%
     summarise(
       mean_rt = mean(rt, na.rm = TRUE),
-      sd_rt = sd(rt, na.rm = TRUE),
-      mean_accuracy = mean(accuracy, na.rm = TRUE),
-      sd_accuracy = sd(accuracy, na.rm = TRUE)
+      mean_accuracy = mean(accuracy, na.rm = TRUE)
     )
   
   ggplot(sub_desc %>% filter(congruency == "incongruent"),
@@ -72,12 +71,12 @@ plot_effect <- function(res, plot_title) {
   ggplot(effects, aes(x = rt_effect, y = acc_effect)) +
     geom_point() +
     geom_smooth(method = "lm", se = TRUE) +
-    labs(x = "RT effect (incongruent − congruent)", y = "Accuracy effect (incongruent − congruent)", title = plot_title) +
+    labs(x = "RT effect (incongruent - congruent)", y = "Accuracy effect (incongruent - congruent)", title = plot_title) +
     theme_minimal()
 }
 
 
-# association between speed and accuracy across sections of 20 trials for each subject
+# association between speed and accuracy across sections of up to 20 trials for each subject
 plot_speed_acc_lm <- function(res, plot_title) {
   section_data <- res %>%
     filter(congruency == "incongruent") %>%
@@ -93,6 +92,20 @@ plot_speed_acc_lm <- function(res, plot_title) {
       mean_accuracy = mean(accuracy, na.rm = TRUE),
       .groups = "drop"
     )
+
+    excluded <- section_data %>%
+    group_by(subject) %>%
+    summarise(
+      sd_rt  = sd(mean_rt, na.rm = TRUE),
+      sd_acc = sd(mean_accuracy, na.rm = TRUE),
+      all_ceiling = all(mean_accuracy == 1, na.rm = TRUE),
+      .groups = "drop"
+    ) %>%
+    filter(is.na(sd_rt) | is.na(sd_acc) | sd_rt == 0 | sd_acc == 0)
+
+  message(plot_title, ": ", nrow(excluded), " of ", n_distinct(section_data$subject),
+          " subjects excluded (", sum(excluded$all_ceiling),
+          " at accuracy = 1 in every section)")
   
   corr_data <- section_data %>%
     group_by(subject) %>%
@@ -139,10 +152,10 @@ plot_rt_acc <- function(res, plot_title) {
 }
 
 
-## association between the proportion of subjects with accuracy = 1 and the sign of the correlation between speed and accuracy
+## association between the proportion of subjects with accuracy > .99 and the sign of the correlation between speed and accuracy
 ceiling_sign_summary <- function(res, name) {
   subject_data <- res %>%
-    filter(congruency == "incongruent")
+    filter(congruency == "incongruent") %>%
     group_by(subject) %>%
     summarise(
       mean_accuracy = mean(accuracy, na.rm = TRUE),
@@ -154,7 +167,7 @@ ceiling_sign_summary <- function(res, name) {
     summarise(
       dataset = name,
       proportion_high_accuracy =
-        sum(mean_accuracy > 0.99, na.rm = TRUE) / n_distinct(res$subject),
+        mean(mean_accuracy > 0.99, na.rm = TRUE),
       correlation_rt_accuracy =
         cor(mean_rt, mean_accuracy, use = "complete.obs")
     )
