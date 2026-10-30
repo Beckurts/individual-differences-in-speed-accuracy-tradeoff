@@ -38,9 +38,7 @@ trial_label <- function(res, conditions = c("congruent", "incongruent")) {
   
   paste0(
     "Mean number of trials per subject: ",
-    paste0(counts$congruency, " = ", round(counts$mean_n, 1),
-           " (SD = ", round(counts$sd_n, 1), ")",
-           collapse = "; ")
+    paste0(counts$congruency, " = ", round(counts$mean_n, 1))
   )
 }
 
