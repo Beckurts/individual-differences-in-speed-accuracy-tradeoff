@@ -5,6 +5,7 @@ clean_data <- function(res, accuracy_cutoff) {
   res %>%
     filter(is.na(block) | block != -999) %>% # remove practice trials, keep rows with missing block
     # set RT and accuracy of trials with RTs outside the specified range NA
+    mutate(
     accuracy = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, accuracy),
     rt = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, rt)
     ) %>%
