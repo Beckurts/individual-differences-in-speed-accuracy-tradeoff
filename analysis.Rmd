@@ -19,7 +19,7 @@ source("functions.R")
 ## Data loading
 ```{r}
 # read the uploaded file containing the selected Stroop data from the ACDC (Haaf et al., 2025)
-results <- read_csv("acdc_stroop_data.csv")
+results <- read_csv("https://media.githubusercontent.com/media/Beckurts/individual-differences-in-speed-accuracy-tradeoff/main/acdc_stroop_data.csv")
 
 # or download the data directly from the ACDC
 # download_acdc(dest_dir = getwd())
