@@ -162,7 +162,7 @@ von_bastian <- results %>%
   filter(authors == unique(results$authors)[8]) %>%
   clean_data(accuracy_cutoff = 0.50)
 
-whitehead1 <- res %>%
+whitehead1 <- results %>%
   filter(authors == unique(results$authors)[9]) %>%
   filter(dataset_id == 56) %>% # data taken from Experiment 1 in Whitehead, Brewer & Blais (2019)
   clean_data(accuracy_cutoff = 0.50)
