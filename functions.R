@@ -143,7 +143,7 @@ plot_speed_acc_lm <- function(res, plot_title) {
     geom_smooth(aes(group = subject, color = sign_corr),
                 method = "lm",
                 se = FALSE) +
-    labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title, subtitle = trial_label(res %>% filter(subject %in% plot_data$subject)) +
+    labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title, subtitle = trial_label(res %>% filter(subject %in% plot_data$subject))) +
     scale_color_manual(
       name = "speed-accuracy correlation",
       values = c(
