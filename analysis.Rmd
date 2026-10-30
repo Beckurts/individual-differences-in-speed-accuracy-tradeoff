@@ -75,112 +75,112 @@ results <- read_csv("acdc_stroop_data.csv")
 ## Data cleaning
 ```{r}
 enkavi <- results %>%
-  filter(authors == unique(res$authors)[1]) %>%
+  filter(authors == unique(results$authors)[1]) %>%
   filter(within_id == 2) %>% # only use data from the first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 hedge <- results %>%
-  filter(authors == unique(res$authors)[2]) %>%
+  filter(authors == unique(results$authors)[2]) %>%
   filter(within_id %in% c(8, 9)) %>% # only use data from the first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 löffler <- results %>%
-  filter(authors == unique(res$authors)[3]) %>%
+  filter(authors == unique(results$authors)[3]) %>%
   filter(accuracy != -3 & accuracy != -2) %>%
   clean_data(accuracy_cutoff = 0.50)
  
 pratte_exp1 <- results %>%
-  filter(authors == unique(res$authors)[4]) %>%
+  filter(authors == unique(results$authors)[4]) %>%
   filter(dataset_id == 39) %>% # Experiment 1 in Pratte et al. (2010)
   clean_data(accuracy_cutoff = 0.50)
  
 pratte_exp2 <- results %>%
-  filter(authors == unique(res$authors)[4]) %>%
+  filter(authors == unique(results$authors)[4]) %>%
   filter(dataset_id == 41)  %>% # Experiment 2 in Pratte et al. (2010)
   clean_data(accuracy_cutoff = 0.75)
 
 rey_mermet1 <- results %>%
-  filter(authors == unique(res$authors)[5]) %>%
+  filter(authors == unique(results$authors)[5]) %>%
   filter(dataset_id == 42)  %>% # color stroop task, young adults
   clean_data(accuracy_cutoff = 0.50)
 
 rey_mermet2 <- results %>%
-  filter(authors == unique(res$authors)[5]) %>%
+  filter(authors == unique(results$authors)[5]) %>%
   filter(dataset_id == 43)  %>% # numeric stroop task, young adults
   clean_data(accuracy_cutoff = 0.50)
 
 rey_mermet3 <- results %>%
-  filter(authors == unique(res$authors)[5]) %>%
+  filter(authors == unique(results$authors)[5]) %>%
   filter(dataset_id == 46) %>% # classical color stroop task, older adults
   clean_data(accuracy_cutoff = 0.50)
  
 rey_mermet4 <- results %>%
-  filter(authors == unique(res$authors)[5]) %>%
+  filter(authors == unique(results$authors)[5]) %>%
   filter(dataset_id == 47) %>% # numeric stroop task, older adults
   clean_data(accuracy_cutoff = 0.50)
 
 stahl <- results %>%
-  filter(authors == unique(res$authors)[6]) %>%
+  filter(authors == unique(results$authors)[6]) %>%
   clean_data(accuracy_cutoff = 0.75)
 
 tang1 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; baseline session; mostly congruent set") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 tang2 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; baseline session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 tang3 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; reactive session; mostly congruent set (100% congruent)") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 tang4 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; reactive session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 tang5 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; reactive session; mostly incongruent set") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 tang6 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; proactive session; PC-50 set (meaning 50% congruency)") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 tang7 <- results %>%
-  filter(authors == unique(res$authors)[7]) %>%
+  filter(authors == unique(results$authors)[7]) %>%
   filter(within_description == "test phase; proactive session; mostly incongruent set") %>% # first measurement point
   clean_data(accuracy_cutoff = 0.50)
 
 von_bastian <- results %>%
-  filter(authors == unique(res$authors)[8]) %>%
+  filter(authors == unique(results$authors)[8]) %>%
   clean_data(accuracy_cutoff = 0.50)
 
 whitehead1 <- res %>%
-  filter(authors == unique(res$authors)[9]) %>%
+  filter(authors == unique(results$authors)[9]) %>%
   filter(dataset_id == 56) %>% # data taken from Experiment 1 in Whitehead, Brewer & Blais (2019)
   clean_data(accuracy_cutoff = 0.50)
   
 whitehead2 <- results %>%
-  filter(authors == unique(res$authors)[9]) %>%
+  filter(authors == unique(results$authors)[9]) %>%
   filter(dataset_id == 59) %>% # data taken from Experiment 2 in Whitehead, Brewer & Blais (2019)
   clean_data(accuracy_cutoff = 0.50)
   
 whitehead3 <- results %>%
-  filter(authors == unique(res$authors)[9]) %>%
+  filter(authors == unique(results$authors)[9]) %>%
   filter(dataset_id == 62) %>% # data taken from Experiment 3 in Whitehead, Brewer & Blais (2019)
   clean_data(accuracy_cutoff = 0.50)
 
 datasets <- list(
   "Enkavi et al. (2019)" = enkavi,
   "Hedge et al. (2018)" = hedge,
-  "Löffler et al." = löffler,
+  "Löffler et al. (2024)" = löffler,
   "Pratte et al. (2010), experiment 1" = pratte_exp1,
   "Pratte et al. (2010), experiment 2" = pratte_exp2,
   "Rey-Mermet et al. (2018), color Stroop, young adults" = rey_mermet1,
