@@ -52,7 +52,7 @@ trial_label <- function(res, conditions = c("congruent", "incongruent")) {
 # group-level association between speed and accuracy
 plot_group_corr <- function(res, plot_title) {
   sub_desc <- res %>%
-  sub_desc %>% filter(congruency == "incongruent") %>%
+  filter(congruency == "incongruent") %>%
     group_by(subject) %>%
     summarise(
       mean_rt = mean(rt, na.rm = TRUE),
