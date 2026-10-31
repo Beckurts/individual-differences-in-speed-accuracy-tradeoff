@@ -53,6 +53,10 @@ plot_group_corr <- function(res, plot_title) {
       mean_rt = mean(rt, na.rm = TRUE),
       mean_accuracy = mean(accuracy, na.rm = TRUE)
     )
+
+  # red for positive, blue for negative correlation
+  r <- cor(sub_desc$mean_rt, sub_desc$mean_accuracy, use = "complete.obs")
+  line_color <- if_else(r > 0, "red", "blue")
   
   ggplot(sub_desc %>% filter(congruency == "incongruent"),
          aes(x = mean_rt, y = mean_accuracy)) +
