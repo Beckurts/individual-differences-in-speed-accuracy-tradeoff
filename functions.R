@@ -146,10 +146,11 @@ plot_speed_acc_lm <- function(res, plot_title) {
       values = c(
       "positive" = scales::alpha("red", 0.3),
       "negative" = scales::alpha("blue", 0.3),
-      "NA" = scales::alpha("grey", 0.3),
       "zero" = scales::alpha("green", 0.3) # correlations equal to 0 probably won't occur
-    )) +
-    theme_minimal()
+    ),
+    na.value = scales::alpha("black", 0.1),
+  ) +
+  theme_minimal()
 }
 
 
