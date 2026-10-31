@@ -231,7 +231,7 @@ for (name in names(datasets)) {
 ``` 
 
 
-### Subject-level association between speed and accuracy across sections of 20 trials
+### Subject-level association between speed and accuracy across sections of up to 20 trials
 ```{r}
 for (name in names(datasets)) {
   
