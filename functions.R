@@ -4,20 +4,24 @@
 clean_data <- function(res, accuracy_cutoff) {
   res %>%
     filter(is.na(block) | block != -999) %>% # remove practice trials, keep rows with missing block
+    filter(!is.na(congruency)) %>% # remove rows with NA in congruency
     # set RT and accuracy of trials with RTs outside the specified range NA
     mutate(
     accuracy = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, accuracy),
     rt = if_else(rt >= 2.5 | rt <= 0.2, NA_real_, rt)
     ) %>%
-    # calculate mean accuracy for each subject
+    # calculate mean accuracy for each subject and condition
+    group_by(subject, congruency) %>%
+    mutate(cond_accuracy = mean(accuracy, na.rm = TRUE)) %>%
     group_by(subject) %>%
-    mutate(mean_accuracy = mean(accuracy, na.rm = TRUE)) %>%
-    # trials of subjects with mean accuracy < accuracy_cutoff become NA
+    # use the lowest condition mean for exclusion of subjects
+    mutate(min_cond_accuracy = min(cond_accuracy, na.rm = TRUE)) %>%
+    # trials of subjects with min_cond_accuracy < accuracy_cutoff become NA
     # accuracy_cutoff will be set to .50 for tasks with 4 or 3 possible answers (chance level for correct answer of .25 and .33, respectively)
     # accuracy_cutoff will be set to .75 for tasks with 2 possible answers (chance level for correct answer of .50)
     mutate(
-      accuracy = if_else(mean_accuracy < accuracy_cutoff, NA_real_, accuracy),
-      rt = if_else(mean_accuracy < accuracy_cutoff, NA_real_, rt)
+      accuracy = if_else(min_cond_accuracy < accuracy_cutoff, NA_real_, accuracy),
+      rt = if_else(min_cond_accuracy < accuracy_cutoff, NA_real_, rt)
     ) %>%
     # calculate proportion of NA trials for each subject
     mutate(na_proportion = mean(is.na(rt) | is.na(accuracy))) %>%
