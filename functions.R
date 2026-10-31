@@ -129,8 +129,7 @@ plot_speed_acc_lm <- function(res, plot_title) {
     mutate(sign_corr = if_else(speed_acc_corr > 0, "positive", "negative"))
   
   plot_data <- section_data %>%
-    left_join(corr_data, by = c("subject")) %>%
-    filter(!is.na(sign_corr))
+    left_join(corr_data, by = c("subject"))
   
   ggplot(plot_data, aes(x = mean_rt, y = mean_accuracy, group = subject)) +
     geom_smooth(aes(group = subject, color = sign_corr),
