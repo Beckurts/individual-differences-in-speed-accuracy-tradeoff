@@ -52,7 +52,8 @@ trial_label <- function(res, conditions = c("congruent", "incongruent")) {
 # group-level association between speed and accuracy
 plot_group_corr <- function(res, plot_title) {
   sub_desc <- res %>%
-    group_by(subject, congruency) %>%
+  sub_desc %>% filter(congruency == "incongruent") %>%
+    group_by(subject) %>%
     summarise(
       mean_rt = mean(rt, na.rm = TRUE),
       mean_accuracy = mean(accuracy, na.rm = TRUE)
@@ -62,7 +63,7 @@ plot_group_corr <- function(res, plot_title) {
   r <- cor(sub_desc$mean_rt, sub_desc$mean_accuracy, use = "complete.obs")
   line_color <- if_else(r > 0, "red", "blue")
   
-  ggplot(sub_desc %>% filter(congruency == "incongruent"),
+  ggplot(sub_desc,
          aes(x = mean_rt, y = mean_accuracy)) +
     geom_point() +
     geom_smooth(method = "lm", se = TRUE, color = line_color) +
