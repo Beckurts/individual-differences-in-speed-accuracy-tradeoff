@@ -120,23 +120,7 @@ plot_speed_acc_lm <- function(res, plot_title) {
       .groups = "drop"
     )
 
-    excluded <- section_data %>%
-    group_by(subject) %>%
-    summarise(
-      sd_rt  = sd(mean_rt, na.rm = TRUE),
-      sd_acc = sd(mean_accuracy, na.rm = TRUE),
-      all_ceiling = all(mean_accuracy == 1, na.rm = TRUE),
-      .groups = "drop"
-    ) %>%
-    filter(is.na(sd_rt) | is.na(sd_acc) | sd_rt == 0 | sd_acc == 0)
-
-  message(plot_title, ": ", nrow(excluded), " of ", n_distinct(section_data$subject),
-          " subjects excluded (", sum(excluded$all_ceiling),
-          " at accuracy = 1 in every section)")
-  
   corr_data <- section_data %>%
-    group_by(subject) %>%
-    filter(sd(mean_rt, na.rm = TRUE) > 0, sd(mean_accuracy, na.rm = TRUE) > 0) %>%
     group_by(subject) %>%
     summarise(
       speed_acc_corr = cor(mean_rt, mean_accuracy, use = "complete.obs"),
