@@ -61,7 +61,7 @@ plot_group_corr <- function(res, plot_title) {
   ggplot(sub_desc %>% filter(congruency == "incongruent"),
          aes(x = mean_rt, y = mean_accuracy)) +
     geom_point() +
-    geom_smooth(method = "lm", se = TRUE) +
+    geom_smooth(method = "lm", se = TRUE, color = line_color) +
     labs(x = "Mean RT (s)", y = "Mean accuracy", title = plot_title, subtitle = trial_label(res, "incongruent")) +
     theme_minimal()
 }
