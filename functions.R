@@ -95,6 +95,8 @@ plot_effect <- function(res, plot_title) {
   ggplot(effects, aes(x = rt_effect, y = acc_effect)) +
     geom_point() +
     geom_smooth(method = "lm", se = TRUE) +
+    geom_hline(yintercept = 0, color = "black") +
+    geom_vline(xintercept = 0, color = "black") +
     labs(x = "RT effect (incongruent - congruent)", y = "Accuracy effect (incongruent - congruent)", title = plot_title,
          subtitle = trial_label(res %>% filter(subject %in% effects$subject))) +
     theme_minimal()
