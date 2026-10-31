@@ -126,7 +126,12 @@ plot_speed_acc_lm <- function(res, plot_title) {
       speed_acc_corr = cor(mean_rt, mean_accuracy, use = "complete.obs"),
       .groups = "drop"
     ) %>%
-    mutate(sign_corr = if_else(speed_acc_corr > 0, "positive", "negative"))
+    mutate(sign_corr = case_when(
+      is.na(speed_acc_corr) ~ NA_character_,
+      speed_acc_corr > 0 ~ "positive",
+      speed_acc_corr < 0 ~ "negative",
+      speed_acc_corr == 0 ~ "zero"
+    ))
   
   plot_data <- section_data %>%
     left_join(corr_data, by = c("subject"))
@@ -140,7 +145,9 @@ plot_speed_acc_lm <- function(res, plot_title) {
       name = "speed-accuracy correlation",
       values = c(
       "positive" = scales::alpha("red", 0.3),
-      "negative" = scales::alpha("blue", 0.3)
+      "negative" = scales::alpha("blue", 0.3),
+      "NA" = scales::alpha("grey", 0.3),
+      "zero" = scales::alpha("green", 0.3) # correlations equal to 0 probably won't occur
     )) +
     theme_minimal()
 }
