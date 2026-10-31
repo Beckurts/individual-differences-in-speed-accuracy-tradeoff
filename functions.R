@@ -149,7 +149,8 @@ plot_speed_acc_lm <- function(res, plot_title) {
       "zero" = scales::alpha("green", 0.3) # correlations equal to 0 probably won't occur
     ),
     na.value = scales::alpha("black", 0.1),
-  ) +
+  )  +
+  ylim(0, 1)+
   theme_minimal()
 }
 
