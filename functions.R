@@ -85,10 +85,10 @@ plot_effect <- function(res, plot_title) {
     summarise(
       rt_effect = mean_rt[congruency == "incongruent"] -
         mean_rt[congruency == "congruent"],
-      # RT effect = RT in incongruent conditions - RT in congruent conditions
+      # RT effect = mean RT in incongruent conditions - mean RT in congruent conditions
       acc_effect = mean_acc[congruency == "incongruent"] -
         mean_acc[congruency == "congruent"]
-      # accuracy effect = accuracy in incongruent conditions - accuracy in congruent conditions
+      # accuracy effect = proportion of correct responses in incongruent conditions - proportion of correct responses in congruent conditions
     )
   
   
